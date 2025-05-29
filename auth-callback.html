@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentification en cours...</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    .loader {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #9146FF;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .container {
+      text-align: center;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="loader"></div>
+    <h2>Authentification en cours...</h2>
+    <p>Vous allez être redirigé automatiquement.</p>
+  </div>
+
+  <script>
+    // Fonction pour extraire les paramètres de l'URL
+    function getHashParams() {
+      const hashParams = {};
+      const hash = window.location.hash.substring(1);
+      
+      if (hash) {
+        const params = hash.split('&');
+        for (let i = 0; i < params.length; i++) {
+          const param = params[i].split('=');
+          hashParams[param[0]] = decodeURIComponent(param[1]);
+        }
+      }
+      
+      return hashParams;
+    }
+
+    // Au chargement de la page
+    window.onload = () => {
+      const params = getHashParams();
+      const accessToken = params.access_token;
+      
+      if (accessToken) {
+        // Stocker le token dans le localStorage
+        localStorage.setItem('twitchAccessToken', accessToken);
+        console.log('Token d\'accès stocké avec succès');
+        
+        // Rediriger vers la page principale
+        window.location.href = '/';
+      } else {
+        console.error('Aucun token d\'accès trouvé dans l\'URL');
+        // Rediriger vers la page principale en cas d'erreur
+        window.location.href = '/';
+      }
+    };
+  </script>
+</body>
+</html>

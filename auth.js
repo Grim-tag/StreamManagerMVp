@@ -4,20 +4,43 @@
 // Gestionnaire d'événement pour le bouton de connexion
 document.getElementById('loginBtn').addEventListener('click', async () => {
   try {
-    // Appel à notre fonction serverless pour obtenir l'URL d'authentification
+    // Récupérer l'URL d'authentification depuis la fonction serverless
     const response = await fetch('/api/twitch-auth');
     const data = await response.json();
     
-    if (response.ok && data.authUrl) {
-      // Redirection vers l'URL d'authentification Twitch
-      window.location = data.authUrl;
-    } else {
-      console.error('Erreur lors de la génération de l\'URL d\'authentification:', data.error);
-      alert('Erreur lors de l\'authentification. Veuillez réessayer.');
-    }
+    // Ouvrir une fenêtre pop-up pour l'authentification Twitch
+    const width = 500;
+    const height = 700;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+    
+    const authWindow = window.open(
+      data.authUrl,
+      'TwitchAuth',
+      `width=${width},height=${height},left=${left},top=${top},toolbar=0,location=0,menubar=0`
+    );
+    
+    // Vérifier périodiquement si l'utilisateur s'est connecté
+    const checkInterval = setInterval(() => {
+      try {
+        // Si la fenêtre est fermée ou redirigée vers notre domaine
+        if (authWindow.closed) {
+          clearInterval(checkInterval);
+          // Vérifier si un token a été stocké
+          if (localStorage.getItem('twitchAccessToken')) {
+            console.log('Authentification réussie via pop-up');
+            // Récupérer les informations utilisateur
+            fetchUserInfo(localStorage.getItem('twitchAccessToken'));
+          }
+        }
+      } catch (e) {
+        // Une erreur se produit si la fenêtre a été redirigée vers un autre domaine
+        // C'est normal et nous pouvons ignorer cette erreur
+      }
+    }, 500);
+    
   } catch (error) {
-    console.error('Erreur lors de l\'appel à la fonction d\'authentification:', error);
-    alert('Erreur de connexion au serveur. Veuillez réessayer.');
+    console.error('Erreur lors de la connexion:', error);
   }
 });
 
@@ -40,31 +63,27 @@ window.onload = () => {
     const accessToken = hashParams.access_token;
     
     if (accessToken) {
+      console.log('Authentification réussie, token reçu');
       // Stocker le token d'accès
       localStorage.setItem('twitchAccessToken', accessToken);
       
-      // Afficher l'interface utilisateur connecté
-      document.getElementById('loginBtn').style.display = 'none';
-      document.getElementById('logoutBtn').style.display = 'inline-block';
-      
-      // Récupérer les informations de l'utilisateur
+      // Récupérer les informations de l'utilisateur immédiatement
       fetchUserInfo(accessToken);
       
       // Nettoyer l'URL pour des raisons de sécurité
       window.history.replaceState({}, document.title, '/');
     }
   } else if (localStorage.getItem('twitchAccessToken')) {
+    console.log('Session existante détectée');
     // Si l'utilisateur est déjà connecté, récupérer ses informations
     const userData = JSON.parse(localStorage.getItem('twitchUser') || '{}');
     
-    // Afficher l'interface utilisateur connecté
-    document.getElementById('loginBtn').style.display = 'none';
-    document.getElementById('logoutBtn').style.display = 'inline-block';
-    
     if (userData.display_name) {
+      console.log('Informations utilisateur trouvées dans le stockage local');
       // Afficher les informations utilisateur si disponibles
       displayUserProfile(userData);
     } else {
+      console.log('Récupération des informations utilisateur depuis l\'API');
       // Sinon, récupérer les informations utilisateur
       fetchUserInfo(localStorage.getItem('twitchAccessToken'));
     }
@@ -94,7 +113,12 @@ function displayUserProfile(userData) {
 // Fonction pour récupérer les informations utilisateur directement depuis l'API Twitch
 async function fetchUserInfo(accessToken) {
   try {
-    if (!accessToken) return;
+    if (!accessToken) {
+      console.error('Aucun token d\'accès fourni');
+      return;
+    }
+    
+    console.log('Récupération des informations utilisateur depuis l\'API Twitch...');
     
     // Appel direct à l'API Twitch pour récupérer les informations utilisateur
     const response = await fetch('https://api.twitch.tv/helix/users', {
@@ -106,19 +130,31 @@ async function fetchUserInfo(accessToken) {
     
     if (response.ok) {
       const data = await response.json();
-      const userData = data.data[0];
+      console.log('Données utilisateur reçues:', data);
       
-      // Stocker les informations utilisateur
-      localStorage.setItem('twitchUser', JSON.stringify(userData));
-      
-      // Afficher les informations utilisateur
-      displayUserProfile(userData);
+      if (data.data && data.data.length > 0) {
+        const userData = data.data[0];
+        console.log('Informations utilisateur récupérées avec succès:', userData.display_name);
+        
+        // Stocker les informations utilisateur
+        localStorage.setItem('twitchUser', JSON.stringify(userData));
+        
+        // Afficher les informations utilisateur
+        displayUserProfile(userData);
+      } else {
+        console.error('Aucune donnée utilisateur reçue');
+      }
     } else if (response.status === 401) {
+      console.error('Token expiré ou invalide (401)');
       // Token expiré, supprimer les informations de connexion
       handleLogout();
+    } else {
+      console.error('Erreur lors de la récupération des informations utilisateur:', response.status);
+      const errorText = await response.text();
+      console.error('Détails de l\'erreur:', errorText);
     }
   } catch (error) {
-    console.error('Erreur lors de la récupération des informations utilisateur:', error);
+    console.error('Exception lors de la récupération des informations utilisateur:', error);
   }
 }
 
