@@ -2,9 +2,9 @@
 const fetch = require('node-fetch');
 
 // Récupération des variables d'environnement
-const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
-const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI || 'https://streammanagermvp.netlify.app/.netlify/functions/twitch-auth-callback';
+const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID || '4ytiv41aszrka8xsaupu67mr7jxsaw';
+// Utilisation d'une redirection directe vers le frontend pour l'authentification implicite
+const REDIRECT_URI = process.env.FRONTEND_URL || 'https://streammanagermvp.netlify.app';
 
 exports.handler = async (event, context) => {
   // CORS headers pour permettre les requêtes cross-origin
@@ -24,8 +24,9 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Génération de l'URL d'authentification Twitch
-    const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${TWITCH_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=user:read:email`;
+    // Génération de l'URL d'authentification Twitch avec flux implicite (token directement retourné au frontend)
+    // Cette méthode est plus simple et ne nécessite pas de secret client
+    const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${TWITCH_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=user:read:email`;
 
     return {
       statusCode: 200,

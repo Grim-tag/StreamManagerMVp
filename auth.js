@@ -1,6 +1,7 @@
-// Utilisation des fonctions serverless pour l'authentification Twitch
-// Les clés d'API sont maintenant stockées en toute sécurité sur le serveur
+// Authentification Twitch avec flux implicite
+// Utilisation de l'API Twitch directement pour une meilleure compatibilité
 
+// Gestionnaire d'événement pour le bouton de connexion
 document.getElementById('loginBtn').addEventListener('click', async () => {
   try {
     // Appel à notre fonction serverless pour obtenir l'URL d'authentification
@@ -20,51 +21,105 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
   }
 });
 
+// Gestionnaire d'événement pour le bouton de déconnexion
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  handleLogout();
+});
+
 window.onload = () => {
-  // Vérifier les paramètres d'URL pour l'authentification
-  const urlParams = new URLSearchParams(window.location.search);
-  const accessToken = urlParams.get('access_token');
-  const refreshToken = urlParams.get('refresh_token');
-  const userDataParam = urlParams.get('user');
-  
-  if (accessToken && userDataParam) {
-    try {
-      // Décoder les informations utilisateur
-      const userData = JSON.parse(decodeURIComponent(userDataParam));
-      
-      // Stocker les tokens et les informations utilisateur
+  // Vérifier le fragment d'URL (hash) pour l'authentification implicite Twitch
+  if (window.location.hash) {
+    // Extraire les paramètres du fragment d'URL
+    const hashParams = window.location.hash.substring(1).split('&').reduce((params, param) => {
+      const [key, value] = param.split('=');
+      params[key] = value;
+      return params;
+    }, {});
+    
+    // Récupérer le token d'accès
+    const accessToken = hashParams.access_token;
+    
+    if (accessToken) {
+      // Stocker le token d'accès
       localStorage.setItem('twitchAccessToken', accessToken);
-      localStorage.setItem('twitchRefreshToken', refreshToken);
-      localStorage.setItem('twitchUser', JSON.stringify(userData));
       
-      // Afficher les informations utilisateur
-      document.getElementById('profile').innerHTML = `
-        <p>Bonjour ${userData.display_name} !</p>
-        <img src="${userData.profile_image_url}" alt="Avatar">
-      `;
+      // Afficher l'interface utilisateur connecté
+      document.getElementById('loginBtn').style.display = 'none';
+      document.getElementById('logoutBtn').style.display = 'inline-block';
+      
+      // Récupérer les informations de l'utilisateur
+      fetchUserInfo(accessToken);
       
       // Nettoyer l'URL pour des raisons de sécurité
       window.history.replaceState({}, document.title, '/');
-    } catch (error) {
-      console.error('Erreur lors du traitement des données utilisateur:', error);
     }
   } else if (localStorage.getItem('twitchAccessToken')) {
     // Si l'utilisateur est déjà connecté, récupérer ses informations
     const userData = JSON.parse(localStorage.getItem('twitchUser') || '{}');
     
+    // Afficher l'interface utilisateur connecté
+    document.getElementById('loginBtn').style.display = 'none';
+    document.getElementById('logoutBtn').style.display = 'inline-block';
+    
     if (userData.display_name) {
-      document.getElementById('profile').innerHTML = `
-        <p>Bonjour ${userData.display_name} !</p>
-        <img src="${userData.profile_image_url}" alt="Avatar">
-      `;
+      // Afficher les informations utilisateur si disponibles
+      displayUserProfile(userData);
     } else {
-      // Si les informations utilisateur ne sont pas disponibles, les récupérer
-      fetchUserData();
+      // Sinon, récupérer les informations utilisateur
+      fetchUserInfo(localStorage.getItem('twitchAccessToken'));
     }
   }
 };
 
-// Fonction pour récupérer les informations utilisateur via notre API serverless
+// Fonction pour afficher le profil utilisateur
+function displayUserProfile(userData) {
+  // Créer un élément de profil s'il n'existe pas
+  let profileElement = document.getElementById('profile');
+  if (!profileElement) {
+    profileElement = document.createElement('div');
+    profileElement.id = 'profile';
+    document.getElementById('authButtons').appendChild(profileElement);
+  }
+  
+  // Afficher les informations utilisateur
+  profileElement.innerHTML = `
+    <p>Bonjour ${userData.display_name} !</p>
+    <img src="${userData.profile_image_url}" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%;">
+  `;
+}
+
+// Fonction pour récupérer les informations utilisateur directement depuis l'API Twitch
+async function fetchUserInfo(accessToken) {
+  try {
+    if (!accessToken) return;
+    
+    // Appel direct à l'API Twitch pour récupérer les informations utilisateur
+    const response = await fetch('https://api.twitch.tv/helix/users', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Client-ID': '4ytiv41aszrka8xsaupu67mr7jxsaw'
+      }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      const userData = data.data[0];
+      
+      // Stocker les informations utilisateur
+      localStorage.setItem('twitchUser', JSON.stringify(userData));
+      
+      // Afficher les informations utilisateur
+      displayUserProfile(userData);
+    } else if (response.status === 401) {
+      // Token expiré, supprimer les informations de connexion
+      handleLogout();
+    }
+  } catch (error) {
+    console.error('Erreur lors de la récupération des informations utilisateur:', error);
+  }
+}
+
+// Fonction pour récupérer les informations utilisateur via notre API serverless (fallback)
 async function fetchUserData() {
   try {
     const accessToken = localStorage.getItem('twitchAccessToken');
@@ -80,18 +135,34 @@ async function fetchUserData() {
     if (response.ok) {
       const userData = await response.json();
       localStorage.setItem('twitchUser', JSON.stringify(userData));
-      
-      document.getElementById('profile').innerHTML = `
-        <p>Bonjour ${userData.display_name} !</p>
-        <img src="${userData.profile_image_url}" alt="Avatar">
-      `;
+      displayUserProfile(userData);
     } else if (response.status === 401) {
       // Token expiré, supprimer les informations de connexion
-      localStorage.removeItem('twitchAccessToken');
-      localStorage.removeItem('twitchRefreshToken');
-      localStorage.removeItem('twitchUser');
+      handleLogout();
     }
   } catch (error) {
     console.error('Erreur lors de la récupération des informations utilisateur:', error);
+    // En cas d'erreur avec l'API serverless, essayer l'appel direct
+    const accessToken = localStorage.getItem('twitchAccessToken');
+    if (accessToken) {
+      fetchUserInfo(accessToken);
+    }
+  }
+}
+
+// Fonction pour gérer la déconnexion
+function handleLogout() {
+  localStorage.removeItem('twitchAccessToken');
+  localStorage.removeItem('twitchRefreshToken');
+  localStorage.removeItem('twitchUser');
+  
+  // Réinitialiser l'interface utilisateur
+  document.getElementById('loginBtn').style.display = 'inline-block';
+  document.getElementById('logoutBtn').style.display = 'none';
+  
+  // Supprimer l'affichage du profil
+  const profileElement = document.getElementById('profile');
+  if (profileElement) {
+    profileElement.innerHTML = '';
   }
 }
