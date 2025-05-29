@@ -1,0 +1,23 @@
+{
+  "name": "streammanagermvp",
+  "version": "1.0.0",
+  "description": "Une application web simple pour gérer et visionner des streams Twitch.",
+  "main": "auth.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Grim-tag/StreamManagerMVp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Grim-tag/StreamManagerMVp/issues"
+  },
+  "homepage": "https://github.com/Grim-tag/StreamManagerMVp#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.8"
+  }
+}

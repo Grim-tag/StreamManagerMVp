@@ -3,38 +3,44 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Stream Manager - Stream Adaptatif</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stream Manager - Gestion de Streams</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://player.twitch.tv/js/embed/v1.js"></script>
 </head>
 <body>
   <div class="header">
-    <div id="profileInfo"></div>
-    <button id="loginBtn" onclick="window.location.href='https://id.twitch.tv/oauth2/authorize?client_id=4ytiv41aszrka8xsaupu67mr7jxsaw&redirect_uri=https://streammanagermvp.netlify.app/&response_type=token&scope=user:read:email'">Connexion Twitch</button>
-    <button id="logoutBtn">Déconnexion</button>
+    <h1>Stream Manager</h1>
+    <div id="authButtons">
+      <button id="loginBtn">Connexion</button>
+      <button id="logoutBtn" style="display: none;">Déconnexion</button>
+    </div>
   </div>
 
   <div class="container">
     <aside class="sidebar">
-      <h3>Streamers connectés</h3>
-      <ul id="streamerList"></ul>
+      <h3>Mes Streams</h3>
+      <ul id="streamList"></ul>
+      
+      <div class="add-stream-form">
+        <h4>Ajouter un stream</h4>
+        <form id="addStreamForm">
+          <input type="text" id="streamTitle" placeholder="Titre du stream" required>
+          <input type="url" id="streamUrl" placeholder="URL du stream" required>
+          <button type="submit">Ajouter</button>
+        </form>
+      </div>
     </aside>
 
     <div class="main-section">
-      <div class="stream-section">
-        <div id="streamContainer"></div>
-        <div class="stream-info" id="streamInfo">
-          <p>Chaîne : <span id="channelName"></span></p>
-          <p>Viewers : <span id="viewerCount">-</span></p>
-          <p>Durée : <span id="streamDuration">-</span></p>
-        </div>
-      </div>
-      <div class="chat-section">
-        <iframe id="chatIframe" frameborder="0"></iframe>
+      <div id="streamContainer">
+        <p>Sélectionnez un stream à afficher</p>
       </div>
     </div>
   </div>
 
-  <script src="lurksingle.js"></script>
+  <!-- Modules ES (type="module") -->
+  <script type="module" src="./supabase.js"></script>
+  <script type="module" src="./db.js"></script>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>

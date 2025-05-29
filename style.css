@@ -1,70 +1,256 @@
 
+/* Variables CSS */
+:root {
+  --primary-color: #3a86ff;
+  --secondary-color: #4cc9f0;
+  --dark-color: #1a1a2e;
+  --light-color: #f8f9fa;
+  --danger-color: #e63946;
+  --success-color: #2a9d8f;
+}
+
+/* Reset et styles de base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #f0f2f5;
+  color: #333;
+  line-height: 1.6;
 }
 
+/* En-tête */
 .header {
-  background-color: #333;
-  color: #fff;
-  padding: 10px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  padding: 1rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Conteneur principal */
 .container {
   display: flex;
   flex-grow: 1;
   overflow: hidden;
+  background-color: white;
 }
 
+/* Barre latérale */
 .sidebar {
-  width: 200px;
-  background-color: #333;
-  color: #fff;
-  padding: 10px;
+  width: 300px;
+  background-color: white;
+  border-right: 1px solid #e1e4e8;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 1.5rem;
 }
 
-.sidebar ul {
+.sidebar h3 {
+  color: var(--dark-color);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #eee;
+}
+
+/* Liste des streams */
+#streamList {
   list-style: none;
   padding: 0;
+  margin: 0 0 2rem 0;
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
-.sidebar li {
+#streamList li {
   cursor: pointer;
-  padding: 5px;
-  border-bottom: 1px solid #555;
+  padding: 0.75rem 1rem;
+  margin: 0.25rem 0;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  color: #333;
 }
 
-.sidebar li:hover {
-  background-color: #444;
+#streamList li:hover {
+  background-color: #f8f9fa;
+  transform: translateX(4px);
 }
 
+#streamList li.active {
+  background-color: #e9ecef;
+  font-weight: 500;
+}
+
+/* Bouton de suppression */
+.delete-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0 0.5rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+  color: #c82333;
+}
+
+/* Formulaire d'ajout */
+.add-stream-form {
+  background-color: #f8f9fa;
+  padding: 1.25rem;
+  border-radius: 8px;
+  margin-top: auto;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.add-stream-form h4 {
+  margin-bottom: 1rem;
+  color: #495057;
+  font-size: 1rem;
+}
+
+.add-stream-form input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.add-stream-form button {
+  width: 100%;
+  padding: 0.6rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.add-stream-form button:hover {
+  background-color: #2979ff;
+}
+
+/* Zone principale du stream */
 .main-section {
   flex-grow: 1;
   display: flex;
-  flex-direction: row;
-  overflow: hidden;
-}
-
-.stream-section {
-  flex-grow: 2;
-  display: flex;
   flex-direction: column;
+  background-color: #f8f9fa;
+  padding: 2rem;
+  overflow-y: auto;
 }
 
 #streamContainer {
   flex-grow: 1;
-  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-#streamContainer iframe {
+#streamContainer p {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.stream-player {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.stream-player h2 {
+  color: white;
+  padding: 1rem;
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  font-size: 1.25rem;
+}
+
+.stream-player iframe {
+  flex-grow: 1;
+  border: none;
+}
+
+/* Boutons d'authentification */
+#authButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+#loginBtn,
+#logoutBtn {
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+#loginBtn {
+  background-color: white;
+  color: var(--primary-color);
+}
+
+#logoutBtn {
+  background-color: #dc3545;
+  color: white;
+}
+
+#loginBtn:hover,
+#logoutBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid #e1e4e8;
+  }
+  
+  .main-section {
+    height: 60vh;
+  }
 }
 
 .stream-info {
