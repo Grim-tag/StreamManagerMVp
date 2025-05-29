@@ -1,0 +1,97 @@
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.container {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  cursor: pointer;
+  padding: 5px;
+  border-bottom: 1px solid #555;
+}
+
+.sidebar li:hover {
+  background-color: #444;
+}
+
+.main-section {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.stream-section {
+  flex-grow: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+#streamContainer {
+  flex-grow: 1;
+  position: relative;
+}
+
+#streamContainer iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.stream-info {
+  background-color: #222;
+  color: #fff;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.chat-section {
+  width: 350px;
+  background-color: #f1f1f1;
+}
+
+#chatIframe {
+  width: 100%;
+  height: 100%;
+}
+
+#profileInfo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+#twitch-embed {
+  width: 100%;
+  height: 100%;
+}

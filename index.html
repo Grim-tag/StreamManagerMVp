@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Stream Manager - Stream Adaptatif</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://player.twitch.tv/js/embed/v1.js"></script>
+</head>
+<body>
+  <div class="header">
+    <div id="profileInfo"></div>
+    <button id="loginBtn" onclick="window.location.href='https://id.twitch.tv/oauth2/authorize?client_id=4ytiv41aszrka8xsaupu67mr7jxsaw&redirect_uri=https://streammanagermvp.netlify.app/&response_type=token&scope=user:read:email'">Connexion Twitch</button>
+    <button id="logoutBtn">Déconnexion</button>
+  </div>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h3>Streamers connectés</h3>
+      <ul id="streamerList"></ul>
+    </aside>
+
+    <div class="main-section">
+      <div class="stream-section">
+        <div id="streamContainer"></div>
+        <div class="stream-info" id="streamInfo">
+          <p>Chaîne : <span id="channelName"></span></p>
+          <p>Viewers : <span id="viewerCount">-</span></p>
+          <p>Durée : <span id="streamDuration">-</span></p>
+        </div>
+      </div>
+      <div class="chat-section">
+        <iframe id="chatIframe" frameborder="0"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script src="lurksingle.js"></script>
+</body>
+</html>
