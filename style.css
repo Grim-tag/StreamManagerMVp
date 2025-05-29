@@ -43,6 +43,49 @@ body {
   font-weight: 600;
 }
 
+/* Conteneur d'authentification */
+.auth-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Boutons d'authentification */
+.auth-button {
+  background-color: #9146FF; /* Couleur Twitch */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.auth-button:hover {
+  background-color: #772ce8;
+}
+
+/* Conteneur de profil */
+.profile-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-container img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.profile-container p {
+  margin: 0;
+  font-weight: 500;
+  font-size: 14px;
+}
+
 /* Conteneur principal */
 .container {
   display: flex;

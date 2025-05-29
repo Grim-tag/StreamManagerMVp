@@ -73,19 +73,22 @@ window.onload = () => {
 
 // Fonction pour afficher le profil utilisateur
 function displayUserProfile(userData) {
-  // Créer un élément de profil s'il n'existe pas
-  let profileElement = document.getElementById('profile');
-  if (!profileElement) {
-    profileElement = document.createElement('div');
-    profileElement.id = 'profile';
-    document.getElementById('authButtons').appendChild(profileElement);
-  }
+  // Récupérer l'élément de profil
+  const profileElement = document.getElementById('profile');
   
-  // Afficher les informations utilisateur
+  // Afficher les informations utilisateur avec une mise en page améliorée
   profileElement.innerHTML = `
+    <img src="${userData.profile_image_url}" alt="Avatar">
     <p>Bonjour ${userData.display_name} !</p>
-    <img src="${userData.profile_image_url}" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%;">
   `;
+  
+  // Afficher le bouton de déconnexion et masquer le bouton de connexion
+  document.getElementById('loginBtn').style.display = 'none';
+  document.getElementById('logoutBtn').style.display = 'inline-block';
+  
+  // Ajouter une classe pour indiquer que l'utilisateur est connecté
+  document.body.classList.add('user-logged-in');
+
 }
 
 // Fonction pour récupérer les informations utilisateur directement depuis l'API Twitch

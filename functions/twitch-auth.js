@@ -25,8 +25,8 @@ exports.handler = async (event, context) => {
 
   try {
     // Génération de l'URL d'authentification Twitch avec flux implicite (token directement retourné au frontend)
-    // Cette méthode est plus simple et ne nécessite pas de secret client
-    const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${TWITCH_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=user:read:email`;
+    // Ajout des paramètres pour déclencher la pop-up et forcer la vérification
+    const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${TWITCH_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=user:read:email%20user:read:follows&force_verify=true&claims=`;
 
     return {
       statusCode: 200,
