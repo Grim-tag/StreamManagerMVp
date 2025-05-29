@@ -26,11 +26,14 @@ window.onload = () => {
     return res;
   }, {});
 
+  // Configuration Twitch - Client ID nécessaire pour l'API Twitch
+  const TWITCH_CLIENT_ID = '4ytiv41aszrka8xsaupu67mr7jxsaw';
+
   if (result.access_token) {
     fetch('https://api.twitch.tv/helix/users', {
       headers: {
         'Authorization': `Bearer ${result.access_token}`,
-        'Client-ID': '4ytiv41aszrka8xsaupu67mr7jxsaw'
+        'Client-ID': TWITCH_CLIENT_ID
       }
     })
     .then(response => response.json())
