@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "echo 'Build step completed' && exit 0",
-    "start": "echo 'Starting server...' && npx serve -s"
+    "start": "echo 'Starting server...' && npx serve -s",
+    "dev": "netlify dev"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
   },
   "homepage": "https://github.com/Grim-tag/StreamManagerMVp#readme",
   "dependencies": {
-    "@supabase/supabase-js": "^2.49.8"
+    "@supabase/supabase-js": "^2.49.8",
+    "node-fetch": "^2.6.7"
   }
 }

@@ -1,10 +1,16 @@
 [build]
   command = "npm install && npm run build"
   publish = "."
+  functions = "functions"
 
 [build.environment]
   NODE_VERSION = "16"
   NPM_FLAGS = "--legacy-peer-deps"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
 
 [[redirects]]
   from = "/*"
@@ -18,3 +24,4 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "same-origin"
+    Content-Security-Policy = "default-src 'self' https://*.twitch.tv https://*.ttvnw.net; script-src 'self' 'unsafe-inline' https://*.twitch.tv; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.twitch.tv https://*.ttvnw.net; connect-src 'self' https://*.twitch.tv https://api.twitch.tv https://*.ttvnw.net https://*.qvpmzkniijkdxacvsalv.supabase.co;"
